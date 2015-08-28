@@ -13,9 +13,8 @@ import "strings"
 import "io/ioutil"
 
 func main() {
-    file, err := ioutil.ReadFile("./names.txt")
-
     // Reading file
+    file, err := ioutil.ReadFile("./names.txt")
     if err != nil {
         fmt.Println(err)
         return
@@ -25,21 +24,31 @@ func main() {
     names := strings.Split(string(file), ",")
 
     // Cleaning names
-    s := make([]string, len(names))
     for i, name := range names {
-        s[i] = strings.Replace(name, "\"", "", 2)
+        names[i] = strings.Replace(name, "\"", "", 2)
     }
 
     // Sorting
-    names, s = sort(s), nil
+    names = sort(names)
 
-    // todo: Names already cached and sorted, we need to do the calculation now
-    fmt.Println(names)
+    // Calculating points & adding
+    offset := 'A' - 1
+    sum := 0
+    for i, name := range names {
+        points := 0
+        for _, letter := range name {
+            points += int(letter) - int(offset)
+        }
+
+        // fmt.Printf("%s: %d x %d = %d\n", name, i + 1, points, points * (i + 1))
+        sum += points * (i + 1)
+    }
+
+    fmt.Printf("Solución: %d\n", sum)
 }
 
 
 // MergeSort ***************************************************
-
 func sort(list []string) []string {
     if len(list) < 2 {
         return list[:]
@@ -54,7 +63,8 @@ func merge(list1 []string, list2 []string) []string {
     i, j, k := 0, 0, 0
 
     for ; i < len(list1) && j < len(list2); k += 1 {
-        if strings.Compare(list1[i], list2[j]) == -1 {
+        // if strings.Compare(list1[i], list2[j]) == -1 {
+        if list1[i] < list2[j] {
             out[k] = list1[i]
             i += 1
         } else {
@@ -73,3 +83,4 @@ func merge(list1 []string, list2 []string) []string {
 
     return out
 }
+// *************************************************************
